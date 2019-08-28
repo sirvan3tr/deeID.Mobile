@@ -1,0 +1,30 @@
+{
+  "presets": [
+    //"@babel/env",
+    //"react-native",
+    //"@babel/preset-flow"
+    "module:metro-react-native-babel-preset"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    ["@babel/plugin-proposal-optional-chaining"],
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "alias": {
+          "@assets": "./assets",
+          "@common": "./src/common",
+          "@components": "./src/components"
+        }
+      }
+    ]
+  ]
+}
