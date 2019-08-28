@@ -82,7 +82,7 @@ export default class almasFFSC extends React.Component {
             I = 'Sirvan Almasi || 26/01/1992 || Saqqez || Sirvan3tr@gmail.com',
             j = [879526612, 1864187998, 3119683462, 785478098, 1061096975, 2814024602, 972289411, 2683930126, 1899345369, 666184941],
             n = 3328912597,
-            omneeID = '';
+            deeIDAdd = '';
         
         var rndStatus = {'round' : 1, 'status' : false, 'fails' : 0},
             e = [],

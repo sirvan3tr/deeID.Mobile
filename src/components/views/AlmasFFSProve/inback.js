@@ -73,7 +73,7 @@ export class AlmasFFSProve extends React.Component {
             <InputWithIcon
                 ref='input'
                 icon='qr-scanner'
-                placeholder='eg.: https://omnee.me/almasFFS'
+                placeholder='eg.: https://deeID.me/almasFFS'
                 onChangeText={url => this.setState({ url })}
                 onPressIcon={() => this.refs.camera.show()} />
             <TouchableHighlight>
