@@ -13,6 +13,7 @@ const navigator = StackNavigator({
     CreateWallet: { screen: Views.CreateWallet },
     LoadMnemonics: { screen: Views.LoadMnemonics },
     LoadPrivateKey: { screen: Views.LoadPrivateKey },
+    LoadProfile: { screen: Views.LoadProfile },
     LoadWallet: { screen: Views.LoadWallet },
     NewWallet: { screen: Views.NewWallet },
     NewWalletName: { screen: Views.NewWalletName },

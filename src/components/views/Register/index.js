@@ -175,10 +175,10 @@ export class Register extends Component {
             walletName = 'User A Wallet',
             walletDescription = 'Pre-defined user A wallet',
             userA = {
-                firstname : "Sirvan",
-                surname : "Almasi",
+                firstname : "Alice",
+                surname : "Mathews",
                 dob : "26/01/1992",
-                placeOfBirth : "Saqqez",
+                placeOfBirth : "London",
                 deeID : '0xa78e5bb6ff6a849e120985d32532e5067f262e19',
                 tel :
                     [{
@@ -247,7 +247,7 @@ export class Register extends Component {
             walletName = 'User B Wallet',
             walletDescription = 'Pre-defined user B wallet',
             userB = {
-                firstname : "Robin",
+                firstname : "Bob",
                 surname : "Smith",
                 dob : "26/01/1992",
                 placeOfBirth : "London",
@@ -295,26 +295,32 @@ export class Register extends Component {
     }
 
     render() {
-        this._storeData();
+        const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
-
-        <Text style={styles.titleS}>Welcome!</Text>
-            <Text style={styles.welcome}>Select a pre-defined account:</Text>
-            <TouchableHighlight 
+                <Text style={styles.titleS}>Welcome!</Text>
+                <TouchableHighlight 
                     style={styles.formButton}>
-                <Button onPress={this.selectUserA.bind(this)}            
-                    title="I want to be User A"
-                    accessibilityLabel="Learn more about this button"
-                /> 
-            </TouchableHighlight>
-            <TouchableHighlight 
-                    style={styles.formButton}>
-                <Button onPress={this.selectUserB.bind(this)}            
-                    title="I want to be User B"
-                    accessibilityLabel="Learn more about this button"
-                /> 
-            </TouchableHighlight>
+                    <Button onPress={() => navigate('LoadProfile')}
+                        title="Load New Profile"
+                        accessibilityLabel="Load new profile using qr code"
+                    />
+                </TouchableHighlight>
+                <Text style={styles.welcome}>OR select a pre-defined account:</Text>
+                <TouchableHighlight 
+                        style={styles.formButton}>
+                    <Button onPress={this.selectUserA.bind(this)}            
+                        title="I want to be User A"
+                        accessibilityLabel="Learn more about this button"
+                    /> 
+                </TouchableHighlight>
+                <TouchableHighlight 
+                        style={styles.formButton}>
+                    <Button onPress={this.selectUserB.bind(this)}            
+                        title="I want to be User B"
+                        accessibilityLabel="Learn more about this button"
+                    />
+                </TouchableHighlight>
             </View>
         );
     }
