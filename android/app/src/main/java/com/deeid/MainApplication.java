@@ -35,7 +35,8 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new SvgPackage(),
             new SnackbarPackage(),
-            new RNSensitiveInfoPackage()
+            new RNSensitiveInfoPackage(),
+            new FfsCompsPackage()
       );
     }
 

@@ -15,9 +15,7 @@ import QRCode from 'react-native-qrcode-svg';
 import Snackbar from 'react-native-snackbar';
 import { Icon, Camera, InputWithIcon } from '@components/widgets';
 import { colors, measures } from '@common/styles';
-import almasFFSC from './ws';
-
-
+import almasFFSC from './ws2';
 
 
 @inject('wallet')

@@ -8,12 +8,21 @@ import {
   Button,
   View,
   AsyncStorage,
-  TouchableHighlight
+  Alert,
+  TouchableHighlight,
+  NativeModules
 } from 'react-native';
 import { Wallet as WalletUtils } from '@common/utils';
 import { Wallets as WalletsActions } from '@common/actions';
 
+import { inject, observer } from 'mobx-react';
+import {observable, autorun} from 'mobx';
+
+var FfsComp = NativeModules.FfsComps;
+
+@observer
 export class Register extends Component {
+    @observable mss;
 
     static navigationOptions = { title: 'deeID - Select an Account' };
 
@@ -24,7 +33,19 @@ export class Register extends Component {
             pk: ''
         };
     }
+  async sayHiFromJava() {
+    FfsComp.computeX('11388433062182984096475268192683646643730265742865816209621138569900375035377207066578267778683344712881054204110128842695419772387166251801767017723337153', 512, (err) => {console.log(err)},
+        (msg) => {
+            //this.doSomething(msg);
+            console.log(msg)
+            this.mss = msg
+        });
+    alert(this.mss);
+  }
 
+  doSomething(msg) {
+    alert(msg)
+  }
     _storeData = async () => {
         try {
           await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
@@ -303,6 +324,13 @@ export class Register extends Component {
                     style={styles.formButton}>
                     <Button onPress={() => navigate('LoadProfile')}
                         title="Load New Profile"
+                        accessibilityLabel="Load new profile using qr code"
+                    />
+                </TouchableHighlight>
+                <TouchableHighlight 
+                    style={styles.formButton}>
+                    <Button onPress={() => this.sayHiFromJava()}
+                        title="Java"
                         accessibilityLabel="Load new profile using qr code"
                     />
                 </TouchableHighlight>

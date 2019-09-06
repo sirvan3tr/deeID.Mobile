@@ -3,6 +3,9 @@ Using the ethereum wallet (https://github.com/fmsouza/ethereum-wallet) as a temp
 
 This project is a Ethereum Wallet built on top of ReactNative.
 
+## Custom Functions
+- Java function to calculate the Fiat-Shamir random numbers and other computations that might not be safe on JavaScript and also given the limitations of JavaScript for BigInt(). TODO: re-create this function on iOS.
+
 ## Table of Contents
 
 * [Available Scripts](#available-scripts)
