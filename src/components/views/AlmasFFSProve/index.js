@@ -1,4 +1,6 @@
 import React from 'react';
+import { Wallet as WalletUtils } from '@common/utils';
+import { Wallets as WalletsActions } from '@common/actions';
 import { Clipboard,
     Modal,
     TouchableHighlight,
@@ -17,8 +19,7 @@ import { Icon, Camera, InputWithIcon } from '@components/widgets';
 import { colors, measures } from '@common/styles';
 import almasFFSC from './ws2';
 
-
-@inject('wallet')
+@inject('wallet', 'wallets')
 @observer
 export class AlmasFFSProve extends React.Component {
     constructor(props) {
@@ -30,6 +31,8 @@ export class AlmasFFSProve extends React.Component {
             modalContent: ''
         };
         this.wsFunc = new almasFFSC();
+        WalletsActions.selectWallet(props.wallet)
+        debugger;
     }
 
     @autobind

@@ -16,8 +16,8 @@ export class LoadProfile extends React.Component {
     async onPressOpenWallet(pk, walletName, walletDescription, almasFFS, type, mod, other) {
         try {
             const wallet = WalletUtils.loadWalletFromPrivateKey(pk);
-            //const { walletName, walletDescription } = this.props.navigation.state.params;
             await WalletsActions.addWallet(walletName, wallet, walletDescription, almasFFS, type, mod, other);
+            this.props.navigation.navigate('WalletDetails', { wallet, replaceRoute: true });
             await WalletsActions.saveWallets();
         } catch (e) {
             console.warn(e);
@@ -39,7 +39,8 @@ export class LoadProfile extends React.Component {
             */
 
             // Parse the data as JSON from the QR code.
-            data = JSON.parse(this.state.data);
+            console.log(this.state.data);
+            data = this.state.data;
 
             /*
             Format of the Imported JSON:
@@ -83,20 +84,13 @@ export class LoadProfile extends React.Component {
 
             // save the pk into a wallet, will redirect to wallet overview too
             this.onPressOpenWallet(data.pk, walletName, walletDescription, data.S, 'both', data.n, data.J);
-
-            // select the wallet and navigat to the detailed page of the wallet
-            const wallet = WalletUtils.loadWalletFromPrivateKey(data.pk);
-            WalletsActions.selectWallet(wallet);
-            this.props.navigation.navigate('WalletDetails', { wallet, replaceRoute: true });
-
-            // or we can go to the wallets overview page
-            //this.props.navigation.navigate('WalletsOverview', { replaceRoute: true });
         } catch (e) {
             console.warn(e);
         }
     }
 
     render() {
+        console.log(data);
         return (
             <View style={styles.container}>
                 <View style={styles.body}>

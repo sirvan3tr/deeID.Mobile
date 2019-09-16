@@ -16,7 +16,7 @@ import {
 import { Wallet as WalletUtils } from '@common/utils';
 import { Wallets as WalletsActions } from '@common/actions';
 import { AlmasFFSProve, SendCoins, WalletExtract, WalletSettings, QRCodeScanner } from '../index';
-import UserHeader from './UserHeader'
+import UserHeader from './UserHeader';
 
 import Drawer from 'react-native-draggable-view'
 
@@ -36,9 +36,15 @@ const styles = StyleSheet.create({
     }
 });
 
+
 export class WalletHome extends Component {
     
     static navigationOptions = { title: 'Load Wallet' };
+
+    constructor(props) {
+      super()
+      this.props = props
+    }
     
     render() {
 

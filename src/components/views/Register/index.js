@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Wallet as WalletUtils } from '@common/utils';
 import { Wallets as WalletsActions } from '@common/actions';
-
+import autobind from 'autobind-decorator';
 import { inject, observer } from 'mobx-react';
 import {observable, autorun} from 'mobx';
 
@@ -244,19 +244,21 @@ export class Register extends Component {
         this.onPressOpenWallet(pk, walletName, walletDescription, s, 'both', n, j);
 
         // select the wallet and navigat to the detailed page of the wallet
-        const wallet = WalletUtils.loadWalletFromPrivateKey(pk);
-        WalletsActions.selectWallet(wallet);
-        this.props.navigation.navigate('WalletDetails', { wallet, replaceRoute: true });
+        //const wallet = WalletUtils.loadWalletFromPrivateKey(pk);
+        //WalletsActions.selectWallet(wallet);
+
 
         // or we can go to the wallets overview page
         //this.props.navigation.navigate('WalletsOverview', { replaceRoute: true });
     }
 
+    @autobind
     async onPressOpenWallet(pk, walletName, walletDescription, almasFFS, type, mod, other) {
         try {
             const wallet = WalletUtils.loadWalletFromPrivateKey(pk);
             //const { walletName, walletDescription } = this.props.navigation.state.params;
             await WalletsActions.addWallet(walletName, wallet, walletDescription, almasFFS, type, mod, other);
+            this.props.navigation.navigate('WalletDetails', { wallet, replaceRoute: true });
             await WalletsActions.saveWallets();
         } catch (e) {
             console.warn(e);

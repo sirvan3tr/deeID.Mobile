@@ -1,4 +1,4 @@
 export const CONFIG = {
-    sharedPreferencesName: '@BitWalletPrefs-712638173',
-    keychainService: '@BitWalletKeychain-513961259'
+    sharedPreferencesName: '@BitXalletPrefs-712638173',
+    keychainService: '@BitXalletKeychain-513961259'
 };
