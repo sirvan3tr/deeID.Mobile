@@ -6,6 +6,7 @@ import { Clipboard,
     TouchableHighlight,
     TouchableOpacity,
     TextInput,
+    Alert,
     Image,
     Share,
     Dimensions,
@@ -32,7 +33,7 @@ export class AlmasFFSProve extends React.Component {
         };
         this.wsFunc = new almasFFSC();
         WalletsActions.selectWallet(props.wallet)
-        debugger;
+        //debugger;
     }
 
     @autobind
@@ -56,17 +57,33 @@ export class AlmasFFSProve extends React.Component {
 
     @autobind
     initiateProof() {
-        var data = JSON.parse(this.state.url),
-            type = data['type'];
-
+        var data = JSON.parse(this.state.url);
+        let type = data.type;
+        console.log(data);
         console.log(type);
         if (type == 'almasFFSRegister') {
             this.wsFunc.almasFFSSubmit(this.state.url);
         }else if(type == 'loginSig') {
+            // !! need to change the button in the form
             this.setState({modalContent: 'site y wants to authenticate your account, would you like to sign in?'});
             this.setState({modalVisible: true});
+        }else if(type == 'deeIDForm') {
+            Alert.alert(
+                'Form Request',
+                'Website X wants to access your payment information!',
+                [
+                  {text: 'Approve', onPress: () => this.formSign()},
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                ],
+                {cancelable: true},
+              );
         } else {
-            Alert('Unknown message');
+            //Alert.alert('Unknown message');
         }
     }
 
@@ -104,7 +121,64 @@ export class AlmasFFSProve extends React.Component {
                 ws.send(payload);
             };
             this.setState({modalVisible: false});
-            alert('Message sent!');
+            //Alert('Message sent!');
+        //} //- if
+        
+    }
+
+    async formSign() {
+        console.log("RUNNING FORMSIGN() -----")
+        // Retrieve data from state stores
+        /**
+         * type, form_type, y, deeID, msg, sig
+         */
+        var event = JSON.parse(this.state.url),
+            wsURL = event['wsURL'],
+            uID  = event['uID'],
+            expirytime = event['expirytime'],
+            y = event['y'];
+            
+        // verify signature
+        // check if public-key and domain are correct
+
+        // Get the payment info and send it over
+
+        // Serialisation
+       // if (uID.length == 36) {
+            // Open new websocket
+            var ws = new WebSocket(wsURL);
+            console.log(wsURL);
+            var deeID = '0xa78e5bb6ff6a849e120985d32532e5067f262e19';
+
+            // form data:
+            // need to fetch this from a database
+            // need to encrypt this data
+            const data = {
+                'card_num': '456523453567643',
+                'exp_date': '04/24',
+                'cvv': '983'
+            };
+
+            const msg = uID + deeID + expirytime + y + data;
+            const { item } = this.props.wallet;
+            // let flatSig = await item.signMessage(msg);
+            let flatSig = '35';
+
+            ws.onopen = () => {
+                var payload = JSON.stringify({
+                    'type': 'deeIDForm',
+                    'uID': uID,
+                    'y': y,
+                    'deeID': deeID,
+                    'exp_time': '',
+                    'data': data,
+                    'msg': msg,
+                    'sig' : flatSig
+                });
+
+                ws.send(payload);
+            };
+            this.setState({modalVisible: false});
         //} //- if
         
     }
@@ -130,9 +204,9 @@ export class AlmasFFSProve extends React.Component {
 
     render() {
         if (this.wsFunc.status == "Pass") {
-            alert("Successful Authentication!");
+            //Alert.alert("Successful Authentication!");
         } else if(this.wsFunc.status == "Fail") {
-            alert("Unsuccessful Authentication :(");
+            //Alert.alert("Unsuccessful Authentication :(");
         }
         const { wallet: { item } } = this.props;
         return (
@@ -151,7 +225,7 @@ export class AlmasFFSProve extends React.Component {
                         <TouchableHighlight>
                         <Button
                             onPress={() => {
-                            this.ethSign();
+                            this.formSign();
                             }}
                             title="Allow"
                             accessibilityLabel="Allow" />
