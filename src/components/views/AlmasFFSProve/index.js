@@ -19,6 +19,7 @@ import Snackbar from 'react-native-snackbar';
 import { Icon, Camera, InputWithIcon } from '@components/widgets';
 import { colors, measures } from '@common/styles';
 import almasFFSC from './ws2';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 
 @inject('wallet', 'wallets')
 @observer
@@ -29,7 +30,11 @@ export class AlmasFFSProve extends React.Component {
             'url' : null,
             'authResult' : '',
             modalVisible: false,
-            modalContent: ''
+            modalContent: '',
+            dialogVisible: false,
+            custFormDiag: false,
+            text: '',
+            textInput : []
         };
         this.wsFunc = new almasFFSC();
         WalletsActions.selectWallet(props.wallet)
@@ -68,6 +73,10 @@ export class AlmasFFSProve extends React.Component {
             this.setState({modalContent: 'site y wants to authenticate your account, would you like to sign in?'});
             this.setState({modalVisible: true});
         }else if(type == 'deeIDForm') {
+            //this.setState({dialogVisible: true});
+            this.setState({custFormDiag: true})
+            this.formSign();
+            /**
             Alert.alert(
                 'Form Request',
                 'Website X wants to access your payment information!',
@@ -82,6 +91,7 @@ export class AlmasFFSProve extends React.Component {
                 ],
                 {cancelable: true},
               );
+              **/
         } else {
             //Alert.alert('Unknown message');
         }
@@ -127,58 +137,70 @@ export class AlmasFFSProve extends React.Component {
     }
 
     async formSign() {
-        console.log("RUNNING FORMSIGN() -----")
         // Retrieve data from state stores
         /**
          * type, form_type, y, deeID, msg, sig
          */
+
         var event = JSON.parse(this.state.url),
-            wsURL = event['wsURL'],
-            uID  = event['uID'],
-            expirytime = event['expirytime'],
-            y = event['y'];
-            
-        // verify signature
-        // check if public-key and domain are correct
+            wsURL = event.ws_url,
+            uID  = event.uID,
+            expirytime = event.exp_time,
+            y = event.y;
 
-        // Get the payment info and send it over
+        if(event.form_type =='custom') {
+            var form = event.form;
+            let textInput = this.state.textInput;
+            for(let i=0; i < form.length; i++) {
+                textInput.push(<TextInput
+                    style = {styles.input}
+                    placeholder={form[i][1]} />);
+            }
+            this.setState({ textInput });
+        } else {
+            console.log("RUNNING FORMSIGN() -----");
+                
+            // verify signature
+            // check if public-key and domain are correct
 
-        // Serialisation
-       // if (uID.length == 36) {
-            // Open new websocket
-            var ws = new WebSocket(wsURL);
-            console.log(wsURL);
-            var deeID = '0xa78e5bb6ff6a849e120985d32532e5067f262e19';
+            // Get the payment info and send it over
 
-            // form data:
-            // need to fetch this from a database
-            // need to encrypt this data
-            const data = {
-                'card_num': '456523453567643',
-                'exp_date': '04/24',
-                'cvv': '983'
-            };
+            // Serialisation
+            // if (uID.length == 36) {
+                // Open new websocket
+                var ws = new WebSocket(wsURL);
+                console.log(wsURL);
+                var deeID = '0xa78e5bb6ff6a849e120985d32532e5067f262e19';
 
-            const msg = uID + deeID + expirytime + y + data;
-            const { item } = this.props.wallet;
-            // let flatSig = await item.signMessage(msg);
-            let flatSig = '35';
+                // form data:
+                // need to fetch this from a database
+                // need to encrypt this data
+                const data = {
+                    'card_num': '456523453567643',
+                    'exp_date': '04/24',
+                    'cvv': '983'
+                };
 
-            ws.onopen = () => {
-                var payload = JSON.stringify({
-                    'type': 'deeIDForm',
-                    'uID': uID,
-                    'y': y,
-                    'deeID': deeID,
-                    'exp_time': '',
-                    'data': data,
-                    'msg': msg,
-                    'sig' : flatSig
-                });
+                const msg = uID + deeID + expirytime + y + data;
+                const { item } = this.props.wallet;
+                // let flatSig = await item.signMessage(msg);
+                let flatSig = '35';
 
-                ws.send(payload);
-            };
-            this.setState({modalVisible: false});
+                ws.onopen = () => {
+                    var payload = JSON.stringify({
+                        'type': 'deeIDForm',
+                        'uID': uID,
+                        'y': y,
+                        'deeID': deeID,
+                        'exp_time': '',
+                        'data': data,
+                        'msg': msg,
+                        'sig' : flatSig
+                    });
+
+                    ws.send(payload);
+                };
+        }
         //} //- if
         
     }
@@ -204,13 +226,57 @@ export class AlmasFFSProve extends React.Component {
 
     render() {
         if (this.wsFunc.status == "Pass") {
-            //Alert.alert("Successful Authentication!");
+            alert("Successful Authentication!");
         } else if(this.wsFunc.status == "Fail") {
-            //Alert.alert("Unsuccessful Authentication :(");
+            alert("Unsuccessful Authentication :(");
         }
         const { wallet: { item } } = this.props;
         return (
             <View style={styles.container}>
+                <ConfirmDialog
+                    visible={this.state.dialogVisible}
+                    title="Data Request"
+                    onTouchOutside={() => this.setState({dialogVisible: false})}
+                    positiveButton={{
+                        title: "Confirm & Approve",
+                        onPress: () => this.formSign()
+                    }}
+                    negativeButton={{
+                        title: "Cancel",
+                        onPress: () => this.setState({dialogVisible: false})
+                    }} >
+                    <View>
+                        <Image
+                            source={require('../../media/img/cc.jpg')}
+                        />
+                        <Text>A website is requesting your payment information. Type in their URL below to confirm.</Text>
+                        <TextInput
+                            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                            placeholder="Type URL/Domain here...!"
+                            onChangeText={(text) => this.setState({text})}
+                            value={this.state.text}
+                        />
+                    </View>
+                </ConfirmDialog>
+
+                <ConfirmDialog
+                    visible={this.state.custFormDiag}
+                    title="Custom form"
+                    onTouchOutside={() => this.setState({custFormDiag: false})}
+                    positiveButton={{
+                        title: "Send",
+                        onPress: () => this.formSign()
+                    }}
+                    negativeButton={{
+                        title: "Cancel",
+                        onPress: () => this.setState({custFormDiag: false})
+                    }} >
+                    <View>
+                    {this.state.textInput.map((value, index) => {
+                        return value
+                    })}
+                    </View>
+                </ConfirmDialog>
 
                 <Modal
                 animationType="slide"
@@ -225,7 +291,7 @@ export class AlmasFFSProve extends React.Component {
                         <TouchableHighlight>
                         <Button
                             onPress={() => {
-                            this.formSign();
+                            this.ethSign();
                             }}
                             title="Allow"
                             accessibilityLabel="Allow" />
@@ -307,5 +373,11 @@ const styles = StyleSheet.create({
     },
     centered: {
         alignSelf: 'center'
-    }
+    },
+    input: {
+        margin: 15,
+        height: 40,
+        borderColor: '#7a42f4',
+        borderWidth: 1
+     }
 });
