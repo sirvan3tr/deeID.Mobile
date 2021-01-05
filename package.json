@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "autobind-decorator": "2.1.0",
-    "axios": "0.18.0",
+    "axios": "0.21.1",
     "ethers": "2.2.6",
     "identicon.js": "2.3.1",
     "jshint": "^2.9.6",
